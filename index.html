@@ -202,6 +202,11 @@ select.wide{width:100%}
 .result{text-align:center}
 .result .big{font-family:var(--display);font-size:56px;line-height:1}
 .result h3{justify-content:center;font-size:30px}
+.today{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;border-top:2px dotted var(--panel-2);padding-top:8px;margin-top:2px;font-size:14px}
+.today span{display:inline-flex;align-items:center;gap:4px}
+.open-note{display:flex;gap:6px;align-items:center;justify-content:center;background:var(--mint);color:var(--btn-ink);border:2px solid var(--line);border-radius:6px;padding:6px 10px}
+.arena-note{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.arena-note.out{background:var(--yellow);color:var(--btn-ink)}
 .reward-line{font-size:22px;display:flex;justify-content:center;align-items:center;gap:6px}
 
 /* shop, roster, stickers */
@@ -2250,7 +2255,7 @@ function runTimeline(now) { if (!TL.length) return; const due = TL.filter(t => t
 // ---------------- visitors ----------------
 function makeVisitors(kind) {
   if (kind === 'map') return [];
-  const rate = visitorRate(), n = clamp(Math.round(2 + rate * 1.2), 2, kind === 'gate' ? 9 : 5), out = [];
+  const rate = boothOpen() ? visitorRate() : 0, n = clamp(Math.round(2 + rate * 1.2), 2, kind === 'gate' ? 9 : 5), out = [];
   for (let i = 0; i < n; i++) out.push(newVisitor(kind, i));
   return out;
 }
@@ -2547,6 +2552,15 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmtC = n => Math.floor(n).toLocaleString('en-AU');
 const KEY = 'missionZoo.v1';
 const TICKET_CAP = 600;
+// Daily limits, so coins mostly come from answering questions:
+const ARENA_DAILY = 3;       // races and battles pay coins at most this many times a day
+const BOOTH_DAILY = 300;     // the ticket booth pays out at most this many coins a day
+const OPEN_MARK = 3;         // a mission with at least this many right answers opens the ticket booth for the day
+function dayKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+function today() { const k = dayKey(); if (!S.day || S.day.d !== k) S.day = { d: k, arena: 0, booth: 0, missions: 0, open: false }; return S.day; }
+const boothOpen = () => today().open;
+const boothRoom = () => Math.max(0, BOOTH_DAILY - today().booth - Math.floor(S.tickets));
+const arenaLeft = () => Math.max(0, ARENA_DAILY - today().arena);
 
 let S;
 const UI = { screen: 'gate', zone: null, edit: false, shopTab: 'animals', shopZone: 'all', shopQ: '', rosterF: 'all', subj: null, reward: null, M: null, R: null, B: null, modal: null, pickA: null, mapHover: null, stickZ: 'all' };
@@ -2646,7 +2660,7 @@ function fresh() {
   S = { v: 1, coins: 300, wood: 20, food: 20, animals: [], pens: [{ id: 1, zone: 'farm', slot: 0, cap: 4 }], decor: [{ zone: 'farm', spot: 0, item: 'flowers' }],
     inv: { ball: 1, tree: 1 }, friends: {}, stats: { maths: { c: 0, t: 0 }, english: { c: 0, t: 0 }, reading: { c: 0, t: 0 }, comp: { c: 0, t: 0 } },
     claimed: {}, notified: {}, recent: {}, seen: {}, seenInit: 1, tickets: 40, last: Date.now(), news: [], nextId: 1, nextPen: 2, missions: 0, savedAt: 0,
-    stars: 0, dex: {}, persSeen: {}, lastMission: 0, buddy: null, vwNext: 0, fountainAt: 0, v2: 1 };
+    stars: 0, dex: {}, persSeen: {}, lastMission: 0, buddy: null, vwNext: 0, fountainAt: 0, v2: 1, day: null };
   const sheep = SP('Sheep').i, goat = SP('Goat').i;
   const a = adopt(sheep, 0), b = adopt(sheep, 1), c = adopt(goat, 1);
   a.p = 'bully'; b.p = 'wimp'; c.p = 'clown'; a.pen = b.pen = c.pen = 1;
@@ -2780,7 +2794,7 @@ function tick(live) {
   if (live && mins < 5) for (const pen of S.pens) if (!(UI.screen === 'zone' && UI.zone === pen.zone) && Math.random() < .35) antic(pen, false);
   const k = 1 - Math.pow(0.8, mins * 4);
   for (const a of S.animals) a.happy = clamp(a.happy + (target(a, now) - a.happy) * k, 0, 100);
-  S.tickets = Math.min(TICKET_CAP, S.tickets + visitorRate() * mins);
+  if (boothOpen()) S.tickets = Math.min(TICKET_CAP, S.tickets + Math.min(visitorRate() * mins, boothRoom()));
   save();
   if (live) refreshLive();
 }
@@ -2859,16 +2873,20 @@ function gatePanelHTML() {
   if (hungry.length) tips.push(`<li>${ic('food')}<span><b>${hungry.length}</b> animal${hungry.length === 1 ? ' is' : 's are'} getting hungry.</span></li>`);
   if (unmet.length) tips.push(`<li>${ic('cloud')}<span><b>${unmet.length}</b> animal${unmet.length === 1 ? ' has' : 's have'} a wish you haven't granted yet. <button class="linkish" data-act="go" data-s="animals" data-f="wish">See wishes</button></span></li>`);
   if (!tips.length) tips.push(`<li>${ic('heart')}<span>Everyone is fed and happy. Time for a mission?</span></li>`);
-  return `<section class="panel booth"><h3>${ic('tickets')} Ticket booth</h3>
-      <div class="big num" id="boothN">${fmtC(n)}</div><div class="small">coins from visitors · holds up to ${TICKET_CAP}</div>${bar(n / TICKET_CAP * 100, 'gold')}
-      <div class="row"><button class="btn go" data-act="collect" ${n < 1 ? 'disabled' : ''}>${ic('coin')} Collect</button><span class="small">${visitorRate().toFixed(1)} coins a minute · average happiness ${avg}%</span></div></section>
+  const t = today(), full = t.booth >= BOOTH_DAILY;
+  if (!t.open) tips.unshift(`<li>${ic('tickets')}<span>The zoo is closed until you pass today's first mission. <button class="linkish" data-act="go" data-s="missions">Go to Missions</button></span></li>`);
+  const boothBody = !t.open
+    ? `<div class="big">Closed</div><div class="small">Pass a mission today (${OPEN_MARK} or more right) and visitors will come all day.</div><div class="row"><button class="btn go" data-act="go" data-s="missions">${ic('mission')} Do a mission</button></div>`
+    : `<div class="big num" id="boothN">${fmtC(n)}</div><div class="small">coins waiting · today you've collected ${fmtC(t.booth)} of ${BOOTH_DAILY}</div>${bar((t.booth + n) / BOOTH_DAILY * 100, 'gold')}
+      <div class="row"><button class="btn go" data-act="collect" ${n < 1 ? 'disabled' : ''}>${ic('coin')} Collect</button><span class="small">${full || boothRoom() < 1 && n < 1 ? 'That\'s all the visitors for today. Missions still pay!' : `${visitorRate().toFixed(1)} coins a minute · average happiness ${avg}%`}</span></div>`;
+  return `<section class="panel booth"><h3>${ic('tickets')} Ticket booth</h3>${boothBody}</section>
     <section class="panel"><h3>${ic('bulb')} Today at the zoo</h3><ul class="tips">${tips.join('')}</ul></section>
     <section class="panel"><h3>${ic('book')} Keeper's diary</h3><ul class="diary">${S.news.slice(0, 4).map(x => `<li>${esc(x.m)}</li>`).join('') || '<li>Nothing has happened yet.</li>'}</ul><button class="linkish" data-act="diary">Read the whole diary</button></section>`;
 }
 function refreshGatePanel() { const p = $('#gatePanel'); if (p) { p.innerHTML = gatePanelHTML(); hydrate(p); } }
 function gateOverlay() {
   const ov = SC.overlay;
-  ov.innerHTML = `<button class="spot-lbl" style="left:${58 / W * 100}%;top:${38 / H * 100}%" data-act="collect">${ic('coin')} <b class="num" id="boothLbl">${fmtC(Math.floor(S.tickets))}</b></button>
+  ov.innerHTML = `<button class="spot-lbl" style="left:${58 / W * 100}%;top:${38 / H * 100}%" data-act="collect">${ic('coin')} <b class="num" id="boothLbl">${boothOpen() ? fmtC(Math.floor(S.tickets)) : 'Closed'}</b></button>
     <button class="spot-lbl" style="left:${276 / W * 100}%;top:${164 / H * 100}%" data-act="go" data-s="map">${ic('train')} Train</button>
     <span class="spot-lbl sign" style="left:${251 / W * 100}%;top:${19 / H * 100}%">Sanctuary</span>
     <button class="spot-lbl" style="left:${36 / W * 100}%;top:${152 / H * 100}%" data-act="diary">Diary</button>`;
@@ -2877,7 +2895,7 @@ function gateOverlay() {
 let ambientT = 0;
 function gateAmbient(now) {
   if (now < ambientT) return; ambientT = now + 1000;
-  const l = document.getElementById('boothLbl'); if (l) l.textContent = fmtC(Math.floor(S.tickets));
+  const l = document.getElementById('boothLbl'); if (l) l.textContent = boothOpen() ? fmtC(Math.floor(S.tickets)) : 'Closed';
   // a visitor might arrive with a wish
   if (Date.now() > (S.vwNext || 0) && SC.visitors && !SC.visitors.some(v => v.wish !== null && v.wish !== undefined)) { const v = pick(SC.visitors); if (v) v.wish = Math.floor(Math.random() * VISITOR_WISHES.length); }
 }
@@ -3089,13 +3107,18 @@ function buddyHTML(line) {
   const b = buddy(); if (!b) return '';
   return `<aside class="buddy panel"><div class="buddy-spr">${spr(b, 3, `data-mood="${UI.M && UI.M.bm || 'happy'}"`)}</div><div class="buddy-say"><b>${esc(b.name)}</b> <span class="small">${esc(PP(b).n)}</span><p>${esc(line || pick(PP(b).buddy.start))}</p><button class="linkish" data-act="pickBuddy">Change buddy</button></div></aside>`;
 }
+function todayHTML() {
+  const t = today();
+  return `<div class="today"><b>Today</b><span>${ic('mission')} ${t.missions} mission${t.missions === 1 ? '' : 's'}</span><span>${ic('tickets')} Ticket booth ${t.open ? `open · ${fmtC(t.booth)}/${BOOTH_DAILY} collected` : 'closed until you pass a mission'}</span><span>${ic('trophy')} Arena coin prizes left: ${arenaLeft()}/${ARENA_DAILY}</span><span class="small muted">Missions have no daily limit.</span></div>`;
+}
 function vMissions() {
   const subj = UI.subj, rw = UI.reward;
   return `<div class="screen-head"><h2>Missions</h2><p>Answer 5 Year 6 questions to earn the reward you pick. New questions pay the most, and questions you've already seen pay very little.</p></div>
   <div class="mission-top">${buddyHTML()}
   <div class="panel small rules"><b>How rewards work</b>
     <div>${ic('maths')} Typed maths (new): <b>50 coins</b> each · ${ic('reading')} Multiple choice (new): <b>30 coins</b> each · Seen before: <b>5 coins</b></div>
-    <div class="muted">Multiple-choice missions need at least ${PASS_MARK}/5 to earn anything, so guessing doesn't pay. Get 5/5 for a 50% bonus.</div></div></div>
+    <div class="muted">Multiple-choice missions need at least ${PASS_MARK}/5 to earn anything, so guessing doesn't pay. Get 5/5 for a 50% bonus.</div>
+    ${todayHTML()}</div></div>
   <div class="step-label"><i>1</i> Choose your subject</div>
   <div class="choose">${SUBJECTS.map(s => { const st = S.stats[s.id], u = unseenCount(s.id); return `<button class="opt-card" data-act="subj" data-v="${s.id}" aria-pressed="${subj === s.id}">${ic(SUBJ_ICON[s.id], 'big')}<h3>${s.n}</h3><span class="muted small">${s.d}</span><span class="small"><b>${st.c}</b> correct so far${st.t ? ` · ${Math.round(st.c / st.t * 100)}%` : ''}</span>${u === null ? '<span class="small new">Always new questions</span>' : `<span class="small ${u ? 'new' : 'old'}">${u ? `${u} new ${s.id === 'comp' ? 'passage' : 'question'}${u === 1 ? '' : 's'} left` : 'All seen: repeats pay less'}</span>`}</button>`; }).join('')}</div>
   <div class="step-label"><i>2</i> Choose your reward</div>
@@ -3153,10 +3176,12 @@ function finishMission() {
   if (passed && perfect) amt = Math.floor(amt * 1.5);
   S[M.reward] += amt;
   S.stats[M.subj].c += newRight; S.stats[M.subj].t += M.qs.length; S.missions++; S.lastMission = Date.now();
+  const td = today(); td.missions++; let opened = false;
+  if (!td.open && correct >= OPEN_MARK) { td.open = true; opened = true; news('🎟️ The zoo gates are open for today! Visitors are on their way.'); }
   const b = buddy(); if (b) { hap(b, perfect ? 15 : correct >= 3 ? 6 : 2); }
   news(`🎯 Mission complete: ${correct}/${M.qs.length} in ${SUBJECTS.find(s => s.id === M.subj).n}, earned ${fmtC(amt)} ${rw.n.toLowerCase()}.`);
   for (const u of ULTRA) if (!S.claimed[u.k] && !S.notified[u.k] && S.stats[u.subj].c >= u.need) { S.notified[u.k] = true; setTimeout(() => toast(`You've earned the ${u.n}! Claim it free in Shop, Ultra rares.`), 600); }
-  M.done = { correct, amt, perfect: passed && perfect, passed, repeats, newRight }; QS = null;
+  M.done = { correct, amt, perfect: passed && perfect, passed, repeats, newRight, opened }; QS = null;
   M.bline = b ? (perfect ? pick(PP(b).buddy.right) + ' PERFECT!' : correct >= 3 ? pick(PP(b).buddy.right) : pick(PP(b).buddy.wrong)) : ''; M.bm = perfect ? 'love' : correct >= 3 ? 'happy' : 'sad';
   save(); render(); bump(M.reward);
 }
@@ -3164,11 +3189,12 @@ function vResult() {
   const M = UI.M, d = M.done, rw = REWARDS[M.reward];
   let msg = !d.passed ? `You need at least ${PASS_MARK}/5 on multiple-choice missions to earn a reward. Read each question carefully and try again!` : d.perfect ? 'Perfect mission! You got the 50% bonus.' : d.correct >= 3 ? 'Great work, zookeeper.' : 'Every mission makes you sharper. Try another!';
   if (d.repeats) msg += ` ${d.repeats} of these question${d.repeats === 1 ? ' was' : 's were'} repeats, which pay much less. New questions pay the most.`;
+  const gate = d.opened ? `<p class="open-note">${ic('tickets')} <b>The zoo is open for today!</b> Visitors will fill the ticket booth (up to ${BOOTH_DAILY} coins today).</p>` : !today().open ? `<p class="open-note">${ic('tickets')} The zoo is still closed. Get ${OPEN_MARK} or more right in a mission to open it for today.</p>` : '';
   return `<div class="mission one"><div class="panel result">
     <div class="muted">${esc(SUBJECTS.find(s => s.id === M.subj).n)} mission</div>
     <div class="big num">${d.correct} / ${M.qs.length}</div>
     <p class="reward-line">${ic(rw.icon)} <b>+${fmtC(d.amt)} ${rw.n.toLowerCase()}</b></p>
-    <p class="muted">${msg}</p>
+    <p class="muted">${msg}</p>${gate}
     <div class="row center"><button class="btn go" data-act="startMission">Same again</button><button class="btn" data-act="go" data-s="missions">Change mission</button><button class="btn" data-act="go" data-s="shop">Go to the Shop</button></div></div>${buddyHTML(M.bline)}</div>`;
 }
 
@@ -3309,13 +3335,15 @@ function vArena() {
   const head = `<div class="screen-head"><h2>Arena</h2><p>Race and battle your animals. Speed and strength come from the species, its personality, its happiness and any shoes or vehicles it has. Every personality races differently and has its own signature move.</p></div>`;
   if (!S.animals.length) return head + '<p>You need an animal first. Visit the Shop!</p>';
   const opts = S.animals.map(a => { const s = spec(a), st = stats(a); return `<option value="${a.id}" ${UI.pickA === a.id ? 'selected' : ''}>${esc(a.name)} (${esc(s.type)}, ${esc(PP(a).n)}) · speed ${st.sp} · strength ${st.st}</option>`; }).join('');
-  return `${head}<div class="arena-grid">
+  const left = arenaLeft();
+  const note = `<div class="panel arena-note ${left ? '' : 'out'}">${ic('coin')} <span>${left ? `<b>${left} of ${ARENA_DAILY}</b> arena coin prizes left today. After that, races and battles still cheer your animals up, but only missions pay coins.` : `<b>Arena coin prizes are used up for today.</b> You can still race and battle for fun and happiness. Missions have no daily limit. <button class="linkish" data-act="go" data-s="missions">Go to Missions</button>`}</span></div>`;
+  return `${head}${note}<div class="arena-grid">
     <section class="panel"><h3>${ic('trophy')} Race</h3><p class="muted">Race three challengers. Answer a typed maths question first: right = turbo boost, wrong = your animal trips and can't win.</p>
       <label for="raceSel" class="small"><b>Your racer</b></label><select id="raceSel" class="wide">${opts}</select>
-      <div class="row"><button class="btn go" data-act="raceGo">Start race</button><span class="small muted">1st: 40 coins · 2nd: 10 coins</span></div></section>
+      <div class="row"><button class="btn go" data-act="raceGo">Start race</button><span class="small muted">${left ? '1st: 40 coins · 2nd: 10 coins' : 'Just for fun today'}</span></div></section>
     <section class="panel"><h3>${ic('anger')} Battle</h3><p class="muted">A friendly wrestle with an evenly matched challenger. A right answer lets your animal use its signature move. A wrong one lets the challenger attack.</p>
       <label for="battleSel" class="small"><b>Your fighter</b></label><select id="battleSel" class="wide">${opts}</select>
-      <div class="row"><button class="btn go" data-act="battleGo">Start battle</button><span class="small muted">Win: 50 coins</span></div></section>
+      <div class="row"><button class="btn go" data-act="battleGo">Start battle</button><span class="small muted">${left ? 'Win: 50 coins' : 'Just for fun today'}</span></div></section>
   </div>`;
 }
 const RW = 320, RH = 150;
@@ -3389,7 +3417,7 @@ function vRace() {
     ${arenaStage()}${names}
     <div class="qcard panel">${qBlockHTML()}${QS.result !== null ? `<div class="next-row"><button class="btn go" data-act="raceRun" id="nextBtn">${QS.result ? 'Start with a turbo boost!' : 'Start the race (no chance of winning)'}</button></div>` : ''}</div>`;
   const place = R.order.findIndex(i => R.lanes[i].mine);
-  const doneHTML = R.phase === 'done' ? `<div class="panel result"><h3>${place === 0 ? 'You won!' : place === 1 ? 'Second place!' : `${place === 2 ? '3rd' : '4th'} place`}</h3><p>${!R.ok ? `${esc(a.name)} tripped at the start because the answer was wrong. Answer correctly to have a chance of winning!` : place === 0 ? `${esc(a.name)} earned ${R.prize} coins and feels fantastic.` : place === 1 ? `${esc(a.name)} earned ${R.prize} coins.` : 'So close! Speed comes from species, personality, happiness, shoes and vehicles.'}</p>
+  const doneHTML = R.phase === 'done' ? `<div class="panel result"><h3>${place === 0 ? 'You won!' : place === 1 ? 'Second place!' : `${place === 2 ? '3rd' : '4th'} place`}</h3><p>${!R.ok ? `${esc(a.name)} tripped at the start because the answer was wrong. Answer correctly to have a chance of winning!` : R.capped && place <= 1 ? `${esc(a.name)} came ${place === 0 ? 'first' : 'second'} and feels fantastic! Arena coin prizes are used up for today, so no coins this time. Missions still pay.` : place === 0 ? `${esc(a.name)} earned ${R.prize} coins and feels fantastic. ${arenaLeft()} arena coin prize${arenaLeft() === 1 ? '' : 's'} left today.` : place === 1 ? `${esc(a.name)} earned ${R.prize} coins. ${arenaLeft()} arena coin prize${arenaLeft() === 1 ? '' : 's'} left today.` : 'So close! Speed comes from species, personality, happiness, shoes and vehicles.'}</p>
     <div class="row center"><button class="btn go" data-act="raceGo">Race again</button><button class="btn" data-act="arenaBack">Back to the arena</button></div></div>` : '';
   return `<div class="screen-head"><h2>Race</h2><p>${R.ok ? 'Turbo boost active!' : `${esc(a.name)} tripped at the start!`}</p></div>${arenaStage()}${names}${doneHTML}`;
 }
@@ -3437,8 +3465,10 @@ function raceRun() {
     if (R.order.length === R.lanes.length) {
       clearInterval(raceT); R.phase = 'done';
       const place = R.order.findIndex(i => R.lanes[i].mine), a = animal(R.a);
-      const prize = !R.ok ? 0 : Math.round((place === 0 ? 40 : place === 1 ? 10 : 0) * R.worth); R.prize = prize;
-      if (prize) S.coins += prize;
+      let prize = !R.ok ? 0 : Math.round((place === 0 ? 40 : place === 1 ? 10 : 0) * R.worth);
+      if (prize && arenaLeft() < 1) { R.capped = true; prize = 0; }
+      if (prize) { S.coins += prize; today().arena++; }
+      R.prize = prize;
       if (place === 0 && a) { a.happy = clamp(a.happy + 10, 0, 100); news(`🏆 ${a.name} won a race!`); }
       save(); render(); if (prize) bump('coins');
     }
@@ -3455,7 +3485,7 @@ function vBattle() {
   const B = UI.B, a = animal(B.a), st = stats(a);
   const hp = (name, sub, v) => `<div class="hp"><b>${esc(name)}</b><span class="small">${esc(sub)}</span>${bar(Math.max(0, v))}<span class="small num">${Math.max(0, v)} HP</span></div>`;
   const top = `${arenaStage()}<div class="hp-row">${hp(a.name, `${spec(a).type} · ${PP(a).n} · strength ${st.st}`, B.hp[0])}<span class="vs">VS</span>${hp(B.r.name, `${B.r.type} · ${B.r.pers} · strength ${B.r.st}`, B.hp[1])}</div><p class="log panel">${esc(B.log)}</p>`;
-  if (B.over) return `<div class="screen-head"><h2>Battle</h2></div>${top}<div class="panel result"><h3>${B.over === 'win' ? 'Victory!' : 'Good try!'}</h3><p>${B.over === 'win' ? `${esc(a.name)} won 50 coins.` : 'No coins this time. Every right answer is an attack, and every wrong answer lets the challenger hit back.'}</p><div class="row center"><button class="btn go" data-act="battleGo">Battle again</button><button class="btn" data-act="arenaBack">Back to the arena</button></div></div>`;
+  if (B.over) return `<div class="screen-head"><h2>Battle</h2></div>${top}<div class="panel result"><h3>${B.over === 'win' ? 'Victory!' : 'Good try!'}</h3><p>${B.over === 'win' ? (B.capped ? `${esc(a.name)} won! Arena coin prizes are used up for today, so no coins this time. Missions still pay.` : `${esc(a.name)} won 50 coins. ${arenaLeft()} arena coin prize${arenaLeft() === 1 ? '' : 's'} left today.`) : 'No coins this time. Every right answer is an attack, and every wrong answer lets the challenger hit back.'}</p><div class="row center"><button class="btn go" data-act="battleGo">Battle again</button><button class="btn" data-act="arenaBack">Back to the arena</button></div></div>`;
   return `<div class="screen-head"><h2>Battle</h2></div>${top}
   <div class="qcard panel">${qBlockHTML()}${QS.result !== null ? `<div class="next-row"><button class="btn go" data-act="battleNext" id="nextBtn">Next round</button></div>` : ''}</div>`;
 }
@@ -3476,7 +3506,7 @@ function battleResolve(ok) {
   setTimeout(() => { const x = B.anim.who === 0 ? 216 : 104; for (let i = 0; i < 5; i++) arenaPart({ x: x + (Math.random() - .5) * 20, y: 96, vx: (Math.random() - .5) * 30, vy: -12, life: 900, kind: 'dust' }); arenaPart({ x, y: 70, vx: 0, vy: -16, life: 1200, kind: 'text', text: '-' + B.anim.d, col: P.yellow }); }, 280);
   if (B.hp[1] <= 0 || B.hp[0] <= 0) {
     B.over = B.hp[1] <= 0 ? 'win' : 'lose';
-    const prize = B.over === 'win' ? 50 : 0; S.coins += prize;
+    let prize = B.over === 'win' ? 50 : 0; if (prize && arenaLeft() < 1) { B.capped = true; prize = 0; } if (prize) { S.coins += prize; today().arena++; }
     if (B.over === 'win') { a.happy = clamp(a.happy + 10, 0, 100); news(`🥊 ${a.name} won a battle against ${B.r.name} the ${B.r.type}!`); }
     QS = null; save(); setTimeout(() => bump('coins'), 50);
   }
@@ -3540,7 +3570,7 @@ const ACT = {
   ride(d) { if (UI.screen === 'map' && SC && SC.kind === 'map') rideTrain(d.z); else goZone(d.z); },
   toggleEdit() { UI.edit = true; render(); },
   endEdit() { UI.edit = false; render(); },
-  collect() { const n = Math.floor(S.tickets); if (n < 1) { toast('The ticket booth is empty. Happy animals and decorations bring more visitors.'); return; } S.coins += n; S.tickets -= n; toast(`Collected ${fmtC(n)} coins from visitors.`); if (SC && SC.kind === 'gate') for (let i = 0; i < Math.min(10, 2 + n / 40); i++) addParticle({ x: 58 + (Math.random() - .5) * 20, y: 60, vx: (Math.random() - .5) * 50, vy: -50 - Math.random() * 30, g: 110, life: 1000, kind: 'coin' }); save(); renderRes(); refreshGatePanel(); bump('coins'); },
+  collect() { if (!boothOpen()) { toast('The ticket booth is closed. Pass a mission today to open the zoo.'); return; } const n = Math.floor(S.tickets); if (n < 1) { toast(today().booth >= BOOTH_DAILY ? 'That\'s all the visitors for today. Missions still pay!' : 'The ticket booth is empty. Happy animals and decorations bring more visitors.'); return; } S.coins += n; S.tickets -= n; today().booth += n; toast(`Collected ${fmtC(n)} coins from visitors.`); if (SC && SC.kind === 'gate') for (let i = 0; i < Math.min(10, 2 + n / 40); i++) addParticle({ x: 58 + (Math.random() - .5) * 20, y: 60, vx: (Math.random() - .5) * 50, vy: -50 - Math.random() * 30, g: 110, life: 1000, kind: 'coin' }); save(); renderRes(); refreshGatePanel(); bump('coins'); },
   diary() { openModal({ type: 'diary' }); },
   feedPen(d) {
     const as = penAnimals(+d.pen).filter(a => a.full < 60); let fed = 0;
