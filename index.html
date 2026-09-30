@@ -296,8 +296,9 @@ select.wide{width:100%}
 
 /* fun missions */
 .fun-label{margin-top:18px}
-.choose.fun{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:820px){.choose.fun{grid-template-columns:1fr}}
+.choose.fun{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:820px){.choose.fun{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.choose.fun{grid-template-columns:1fr}}
 .fun-card{background:linear-gradient(var(--panel),var(--panel)) padding-box,repeating-linear-gradient(45deg,var(--pink-deep) 0 6px,var(--yellow-deep) 6px 12px) border-box;border-color:transparent}
 .fun-card[aria-pressed="true"]{background:linear-gradient(var(--yellow),var(--yellow)) padding-box,repeating-linear-gradient(45deg,var(--pink-deep) 0 6px,var(--yellow-deep) 6px 12px) border-box}
 /* Homophone Chaos stage */
@@ -327,23 +328,6 @@ select.wide{width:100%}
 .hic-meter{display:flex;align-items:center;gap:5px;margin:4px 0 6px;font-size:14px}
 .hic-meter span:not(.small){width:16px;height:16px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2)}
 .hic-meter span.on{background:var(--sky)}
-/* Whodunit */
-.case-crime{font-weight:600}
-.suspects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
-@media (max-width:480px){.suspects{grid-template-columns:1fr}}
-.suspect{position:relative;display:flex;gap:8px;align-items:center;border:2px solid var(--line);border-radius:8px;background:var(--panel-2);padding:6px;overflow:hidden}
-.suspect>div:last-of-type{display:flex;flex-direction:column;min-width:0}
-.suspect b{font-family:var(--display);font-size:17px}
-.suspect.out{opacity:.55}
-.suspect.guilty{background:var(--yellow);color:var(--btn-ink)}.suspect.guilty .muted{color:var(--btn-ink)}
-.stamp{position:absolute;right:4px;top:4px;transform:rotate(-8deg);font-size:12px!important;border:3px solid var(--bad);color:var(--bad);font-family:var(--display);font-weight:700;font-size:15px;padding:0 6px;border-radius:4px;background:rgba(255,255,255,.7);letter-spacing:.05em}
-.stamp.red{border-color:#c43d5e;color:#c43d5e}.stamp.big{position:static;display:inline-block;transform:rotate(-6deg);font-size:26px;padding:2px 12px}
-.clues{margin:6px 0 0;padding-left:22px;display:grid;gap:6px}
-.clues li{line-height:1.5}.clues li.now{background:var(--yellow);color:var(--btn-ink);border-radius:6px;padding:2px 6px}
-.clue-now{background:var(--panel-2);border-left:6px solid var(--line);border-radius:6px;padding:8px 10px;line-height:1.5}
-.case-closed{text-align:center;margin-top:10px}
-.confess{display:flex;gap:12px;align-items:center;text-align:left;margin-top:12px}
-.confess .speech{margin:6px 0}
 /* Mystery eggs */
 .egg-strip{display:flex;align-items:center;gap:10px;border-top:2px dotted var(--panel-2);padding-top:8px;margin-top:8px;text-align:left;flex-wrap:wrap}
 .egg-strip>div{flex:1;min-width:160px;display:flex;flex-direction:column;gap:2px}
@@ -4821,28 +4805,6 @@ const SPELL = [
 ];
 const spellId = w => 's' + hashStr(w[0]);
 
-// ---------- Whodunit ----------
-const CRIMES = [
-  { item: 'the bananas', v: 'were', short: 'bananas', from: 'the keeper\'s lunchbox', hid: 'under its pillow' },
-  { item: 'the birthday cake', v: 'was', short: 'cake', from: 'the staff room', hid: 'behind the water trough, with one bite missing' },
-  { item: 'the golden trophy', v: 'was', short: 'trophy', from: 'the trophy cabinet', hid: 'in its pen, being used as a drinking cup' },
-  { item: 'the gift shop keys', v: 'were', short: 'keys', from: 'the ticket booth', hid: 'buried in the sandpit' },
-  { item: 'the Zoo Train\'s whistle', v: 'was', short: 'whistle', from: 'the train station', hid: 'tied around its neck like a necklace' },
-  { item: 'all the cupcakes', v: 'were', short: 'cupcakes', from: 'the party table', hid: 'in its tummy. All of them' },
-  { item: 'the statue\'s crown', v: 'was', short: 'crown', from: 'the Zoo Gate statue', hid: 'on its own head, obviously' },
-  { item: 'the carrots for the rabbits', v: 'were', short: 'carrots', from: 'the vegetable shed', hid: 'arranged into a carrot castle' },
-];
-const PLACES_FAR = [['Ocean Pools', 'swimming laps'], ['Frosty Forest', 'building a snowman'], ['Aussie Bush', 'counting gum leaves'], ['Rainforest', 'swinging on vines'], ['Savanna', 'sunbaking on a rock']];
-const CONFESS = {
-  bully: 'Fine! I took it! I\'m the boss, so it was basically MINE anyway.', wimp: 'I\'m s-s-sorry! I got scared and panicked!', clown: 'Okay, okay, you got me! It was supposed to be a prank... a hilarious one!',
-  drama: 'YES! It was ME! Arrest me! This is the most DRAMATIC day of my LIFE!', showoff: 'You caught me. Did you see how smoothly I did it though?', sleepy: '*yawn* ...I thought I was dreaming it.',
-  knowit: 'Actually, I was going to give it back. Technically.', escape: 'I would have got away with it too, if it weren\'t for that tunnel collapsing.', grump: 'Humph. Fine. I did it. Happy now?',
-  sweet: 'I just wanted to share it with everyone! I\'m so sorry!', thief: 'Finders keepers? No? ...Okay, fair enough.', chatter: 'Okay, so it all started when my cousin Gary said...',
-  scaredy: 'AAH! You found me! Please don\'t be cross!', party: 'I was planning a SURPRISE PARTY! Surprise?', prank: 'Hehehe. Gotcha! ...Okay, you got ME.',
-  peace: 'I only took it to stop everyone fighting over it.', diva: 'It matched my outfit. What was I supposed to do?', dreamer: 'Oh! Was I not supposed to take it? I was thinking about clouds.',
-  copycat: 'Someone else took something once, so I copied them!', daredevil: 'I did it for the THRILL! And I\'d do it again!',
-};
-
 // ---------- Hiccup Emergency: cures for each right answer ----------
 const REMEDIES = [
   { k: 'water', say: 'drinks a glass of water UPSIDE DOWN', prop: 'glass', flip: 1 },
@@ -4868,7 +4830,6 @@ const EGG_SILLY = [
 // Mission Zoo: the fun missions.
 //  Homophone Chaos  – your mission buddy reads a sentence; pick the wrong word and it acts it out
 //  Spelling Bee     – the device says a word; spell it right or the bees chase your buddy (fun2.js)
-//  Whodunit         – something has gone missing; read the clues and catch the culprit (fun2.js)
 //  Hiccup Emergency – your buddy has the hiccups; right answers cure them, wrong ones launch it (fun2.js)
 //  Homework marking – the Know-it-all hands in a worksheet it swears is perfect; find and fix its mistakes
 // They use the normal mission rules: pick a reward first, new questions pay the most, 3/5 to earn anything
@@ -4877,7 +4838,6 @@ const EGG_SILLY = [
 const FUN = [
   { id: 'homo', n: 'Homophone Chaos', d: 'Pick the right word... or watch your buddy act out the wrong one', bucket: 'english', icon: 'english', mc: true },
   { id: 'bee', n: 'Spelling Bee', d: 'Listen to the word and spell it. Get it wrong and the bees attack!', bucket: 'english', icon: 'english', mc: false },
-  { id: 'who', n: 'Whodunit', d: 'Something has gone missing! Read the clues and catch the culprit', bucket: 'comp', icon: 'comp', mc: true },
   { id: 'hic', n: 'Hiccup Emergency', d: 'Your buddy has the hiccups! Every right answer calms them down', bucket: 'maths', icon: 'maths', mc: false },
   { id: 'hw', n: 'Mark the Know-it-all\'s homework', d: 'It swears every answer is perfect. Find the mistakes and fix them', bucket: 'maths', icon: 'maths', mc: true },
 ];
@@ -5205,7 +5165,7 @@ function funMissionHTML() {
   const prog = M.qs.map((_, i) => `<span class="${i < M.res.length ? (M.res[i] ? 'ok' : 'bad') : i === M.i ? 'now' : ''}"></span>`).join('');
   const v = Math.round(q.worth * rw.per * 10) / 10;
   const worth = q.fresh ? `<b class="new">New</b> · worth ${num(v)} ${rw.n.toLowerCase()}` : `<b class="old">Seen before</b> · worth only ${num(v)} ${rw.n.toLowerCase()}`;
-  const unit = M.fun === 'hw' ? 'problem' : M.fun === 'bee' ? 'word' : M.fun === 'who' ? 'clue' : 'question';
+  const unit = M.fun === 'hw' ? 'problem' : M.fun === 'bee' ? 'word' : 'question';
   const next = QS.result !== null ? `<div class="next-row"><button class="btn go" data-act="nextQ" id="nextBtn">${M.i < M.qs.length - 1 ? `Next ${unit}` : 'See my reward'}</button></div>` : '';
   const card = `<div class="qcard panel" id="qcard"><div class="progress">${prog}</div><div class="muted small">${esc(M.title)} · ${unit} ${M.i + 1} of ${M.qs.length} · ${worth}</div>${mode.card()}${next}</div>`;
   const side = mode.side ? mode.side() : '';
@@ -5228,7 +5188,6 @@ Object.assign(ACT, {
 // Mission Zoo: more fun missions (uses the stage, modes and props from fun.js).
 //  Spelling Bee     – the device says a word out loud; spell it right and the bees buzz off, wrong and they chase your buddy
 //  Hiccup Emergency – typed maths; each right answer is a hiccup cure, each wrong one a mega-hiccup
-//  Whodunit         – something has gone missing; suspects are your own animals; read the clues, rule them out, accuse
 //  Mystery eggs     – new right answers on any mission warm an egg; when it's warm enough it hatches
 
 // =====================================================================
@@ -5404,72 +5363,6 @@ MODES.hic = {
   finished() { const M = UI.M, b = buddy(); M.cured = M.hicL === 0; if (b && M.cured) hap(b, 6); },
   resultExtra() { const M = UI.M, b = stageAnimal(); return M.cured ? `<p class="open-note">${ic('heart')} <b>Hiccups cured!</b> ${esc(b.name)} is so grateful.</p>` : `<p class="small muted">${esc(b.name)} still has ${M.hicL} hiccup${M.hicL === 1 ? '' : 's'} left. Get every answer right to cure them completely.</p>`; },
   note: () => '<span class="small new">Always new maths questions</span>',
-};
-
-// =====================================================================
-//  WHODUNIT
-// =====================================================================
-const firstSentence = s => (s.match(/^[^.!?]*[.!?]/) || [s])[0];
-function caseSuspects() {
-  const inPens = S.animals.filter(a => a.pen), rest = S.animals.filter(a => !a.pen);
-  const out = [], ps = new Set(), names = new Set();
-  for (const a of [...shuffle(inPens), ...shuffle(rest)]) { if (out.length >= 4) break; if (ps.has(a.p) || names.has(a.name)) continue; ps.add(a.p); names.add(a.name); out.push(a); }
-  // not enough different personalities in the zoo yet: some visitors from other zoos come under suspicion too
-  while (out.length < 4) {
-    const p = pick(PERS_KEYS.filter(k => !ps.has(k))), sp = pick(SPECIES), used = new Set([...S.animals.map(a => a.name), ...names]);
-    const name = pick(NAMES.filter(n => !used.has(n)));
-    ps.add(p); names.add(name);
-    out.push({ id: -1 - out.length, s: sp.i, t: ri(0, sp.types.length - 1), u: null, gear: {}, name, p, guest: true });
-  }
-  return shuffle(out);
-}
-function makeCase() {
-  const sus = caseSuspects(), culprit = pick(sus), inn = shuffle(sus.filter(a => a !== culprit));
-  const c = pick(CRIMES), Item = c.item[0].toUpperCase() + c.item.slice(1);
-  const T = (13 + ri(0, 3)) * 60 + pick([10, 20, 30, 40, 50]);
-  const names = sus.map(a => a.name), who = a => `${a.name} the ${spec(a).type}`;
-  const Qn = (q, right, e) => Q(q, right, names.filter(n => n !== right), e);
-  const B = {
-    asleep: X => ({ text: `${Item} ${c.v} taken at exactly ${clock(T)}. At that time, ${X.name} was fast asleep in its pen. The night keeper peeked in at ${clock(T - 10)} and again at ${clock(T + 10)}, and ${X.name} hadn't moved a whisker.`,
-      q: Qn('Which suspect can you rule out?', X.name, `${X.name} was asleep, and the keeper checked on it just before and just after ${clock(T)}. It couldn't have done it.`) }),
-    faraway: X => { const [z, act] = pick(PLACES_FAR); return { text: `${X.name} spent the whole afternoon in the ${z}, ${act}. It's a 40-minute walk from the ${z} to the Zoo Gate, and the thief was in and out of ${c.from} in under five minutes.`,
-      q: Q(`Why can't ${X.name} be the culprit?`, 'It was too far away to get there and back in time', [`It didn't want ${c.item}`, 'It was fast asleep', 'It is too short to reach the shelf'], `A 40-minute walk each way doesn't fit into five minutes, so ${X.name} couldn't have done it.`) }; },
-    tooshort: X => { const h = pick([1.5, 1.8, 2, 2.2, 2.4]), r = pick([45, 60, 75, 90]); return { text: `${Item} ${c.v} kept on a shelf ${num(h)} m above the ground. Even standing on tiptoe, ${X.name} can only reach ${r} cm high.`,
-      q: Qn('Which suspect could NOT have reached the shelf?', X.name, `${num(h)} m is ${num(h * 100)} cm, which is much higher than ${r} cm.`) }; },
-    allergic: X => { const al = pick(['feathers', 'glitter', 'pepper', 'dust']); return { text: `${X.name} is allergic to ${al}: one sniff and it sneezes for an hour. The floor near ${c.from} was covered in ${al}, but nobody heard a single sneeze all afternoon.`,
-      q: Q(`Why do the detectives think ${X.name} was never there?`, 'Nobody heard it sneeze', ['It left no footprints', 'It was on the Zoo Train', 'The keeper saw it asleep'], `If ${X.name} had gone near the ${al}, it would have sneezed for an hour. Nobody heard a sneeze.`) }; },
-    train: X => ({ text: `Three visitors saw ${X.name} ride the Zoo Train all the way round the island. The train left the station at ${clock(T - 15)} and didn't stop until ${clock(T + 20)}.`,
-      q: Qn(`Which suspect was on the Zoo Train when ${c.item} ${c.v} taken?`, X.name, `The train ran from ${clock(T - 15)} to ${clock(T + 20)}, and the crime happened at ${clock(T)}, in between.`) }),
-    photo: X => ({ text: `A visitor's photo, taken at exactly ${clock(T)}, shows ${X.name} having its portrait painted in the Sanctuary, sitting perfectly still for a whole hour.`,
-      q: Q('What does the photo prove?', `${X.name} was busy somewhere else when the crime happened`, [`${X.name} took ${c.item}`, `${X.name} is good at painting`, 'The painter is the culprit'], `The photo was taken at the exact time of the crime, and ${X.name} was sitting still for an hour. That's an alibi.`) }),
-  };
-  const kinds = shuffle(Object.keys(B)).slice(0, 3);
-  const clues = inn.map((X, i) => Object.assign(B[kinds[i]](X), { out: X }));
-  const line = pick(PERS[culprit.p].lines);
-  const pNames = sus.map(a => PERS[a.p].n);
-  clues.push({ text: `As the thief ran off, a keeper heard it say: "${line}"`,
-    q: Q('Which kind of animal would say something like that?', PERS[culprit.p].n, pNames.filter(n => n !== PERS[culprit.p].n), `That sounds just like a ${PERS[culprit.p].n}. ${firstSentence(PERS[culprit.p].d)}`) });
-  clues.push({ text: null, q: Qn(`Who took ${c.item}?`, culprit.name, `The other three all had alibis, and the voice matched ${who(culprit)}, the ${PERS[culprit.p].n}.`) });
-  return { sus, culprit, c, T, clues };
-}
-function caseHTML() {
-  const M = UI.M, K = M.case, answered = M.res.length, over = !!M.done;
-  const outNow = new Set(K.clues.filter((cl, i) => cl.out && i < answered).map(cl => cl.out));
-  const card = a => { const out = outNow.has(a), guilty = over && a === K.culprit, P = PERS[a.p];
-    return `<div class="suspect ${out ? 'out' : ''} ${guilty ? 'guilty' : ''}"><div class="sprite-wrap">${spr(a, 2, `data-mood="${guilty ? 'shock' : out ? 'happy' : 'norm'}" data-noshadow="1"`)}</div><div><b>${esc(a.name)}</b><span class="small">${esc(spec(a).type)} · <b>${esc(P.n)}</b>${a.guest ? ' (visitor)' : ''}</span><span class="small muted">${esc(firstSentence(P.d))}</span></div>${out ? '<span class="stamp">RULED OUT</span>' : ''}${guilty ? '<span class="stamp red">GUILTY</span>' : ''}</div>`; };
-  const shown = K.clues.slice(0, Math.min(K.clues.length - 1, M.i + 1)).filter(cl => cl.text);
-  return `<article class="panel case"><h3>${ic('comp')} Case file: the missing ${esc(K.c.short)}</h3>
-    <p class="case-crime">${esc(K.c.item[0].toUpperCase() + K.c.item.slice(1))} ${K.c.v} taken from ${esc(K.c.from)} at ${esc(clock(K.T))}. Four suspects were seen near the scene. Only one of them did it.</p>
-    <div class="suspects">${K.sus.map(card).join('')}</div>
-    <h4>Clues</h4><ol class="clues">${shown.map((cl, i) => `<li class="${i === M.i && !over ? 'now' : ''}">${esc(cl.text)}</li>`).join('')}</ol>
-    ${over ? `<div class="case-closed"><span class="stamp red big">CASE CLOSED</span></div>` : ''}</article>`;
-}
-MODES.who = {
-  start(M) { const K = makeCase(); M.case = K; const id = 'w' + hashStr(K.c.item + K.culprit.name + K.T + Date.now()); M.qs = K.clues.map((cl, i) => tagQ(Object.assign({}, cl.q), id + '.' + i)); },
-  card() { const M = UI.M, cl = M.case.clues[M.i]; return `${cl.text ? `<p class="clue-now"><b>Clue ${M.i + 1}:</b> ${esc(cl.text)}</p>` : '<p class="clue-now"><b>Time to solve the case!</b> Look at all the clues and the suspects.</p>'}${qBlockHTML()}`; },
-  wide: () => caseHTML(), side: () => buddyHTML(UI.M.bline),
-  resultExtra() { const K = UI.M.case, a = K.culprit; return `<div class="confess">${spr(a, 3, 'data-mood="shock"')}<div><b>${esc(a.name)} the ${esc(spec(a).type)} confesses:</b><p class="speech">"${esc(CONFESS[a.p] || 'Fine. It was me.')}"</p><p class="small">${esc(K.c.item[0].toUpperCase() + K.c.item.slice(1))} ${K.c.v} found ${esc(K.c.hid)}.</p></div></div>`; },
-  note: () => '<span class="small new">A new mystery every time</span>',
 };
 
 // =====================================================================
