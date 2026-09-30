@@ -353,11 +353,81 @@ select.wide{width:100%}
 .hw-ans{font-family:"ZooDigits","Comic Sans MS","Chalkboard SE","Marker Felt",var(--display)}
 .pen{font-family:"ZooDigits","Comic Sans MS","Chalkboard SE","Marker Felt",var(--display);font-weight:700;margin-left:6px;transform:rotate(-4deg);display:inline-block}
 .pen.ok{color:var(--ok)}.pen.bad{color:var(--bad)}
+/* Zoo Score: the big number in the top bar */
+.brand{margin-right:0;flex-direction:column;align-items:flex-start;gap:0}
+.brand span{font-size:12px;line-height:1}
+.zs-wrap{margin-right:auto;position:relative}
+.zs{position:relative;display:flex;align-items:center;gap:8px;border:3px solid var(--line);border-radius:10px;padding:3px 10px 3px 6px;background:linear-gradient(180deg,#fff3b8,var(--yellow));color:var(--btn-ink);box-shadow:0 3px 0 var(--line);text-align:left}
+.zs:hover{background:linear-gradient(180deg,#fff8d0,#fde79c)}
+.zs:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.zs-main{display:flex;flex-direction:column;line-height:1}
+.zs-lbl{font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.zs-num{font-family:var(--display);font-size:30px;line-height:1;min-width:4ch;text-shadow:2px 2px 0 #fff8dc}
+.zs-side{display:flex;flex-direction:column;gap:2px;min-width:118px}
+.zs-rank{font-family:var(--display);font-size:13px;line-height:1.1}
+.zs-bar{display:block;height:8px;border:2px solid var(--line);border-radius:3px;background:#fff8ec;overflow:hidden}
+.zs-bar i{display:block;height:100%;background:var(--pink-deep);transition:width .6s}
+.zs-next{font-size:11px;line-height:1.2;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis}
+.zs-streak{display:flex;align-items:center;gap:2px;font-family:var(--display);font-size:18px;border-left:2px dotted var(--line);padding-left:6px}
+.zs-streak .small{font-size:12px;margin-left:2px}
+canvas.off{filter:grayscale(1);opacity:.45}
+.zs.glow{animation:zsglow 1s steps(5)}
+@keyframes zsglow{0%,100%{box-shadow:0 3px 0 var(--line)}30%{box-shadow:0 3px 0 var(--line),0 0 0 6px var(--pink)}60%{box-shadow:0 3px 0 var(--line),0 0 0 3px var(--yellow-deep)}}
+.zs-float{position:absolute;left:44px;top:calc(100% + 6px);font-family:var(--display);font-size:20px;font-weight:700;pointer-events:none;animation:zsfloat 1.8s steps(12) forwards;background:var(--panel);border:2px solid var(--line);border-radius:6px;padding:0 8px;box-shadow:0 2px 0 var(--line);z-index:25;white-space:nowrap}
+.zs-float.up{color:var(--ok)}.zs-float.down{color:var(--bad)}
+@keyframes zsfloat{0%{opacity:0;transform:translateY(-14px) scale(.6)}15%{opacity:1;transform:translateY(0) scale(1.15)}25%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+@media (max-width:620px){.zs-wrap{order:3;width:100%;margin-right:0}.zs{width:100%;padding:2px 8px 2px 4px;gap:6px}.zs-num{font-size:24px}.zs-lbl{font-size:11px}.zs-side{flex:1;min-width:0}.zs-next{max-width:none}.zs-streak{font-size:16px}.brand span{display:none}}
+/* Zoo Gate: the next rival taunts you */
+.league-strip{max-width:960px;margin:0 auto 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ls-spr{flex:0 0 auto;background:var(--mint);border:2px solid var(--line);border-radius:8px;padding:2px}
+.ls-body{flex:1;min-width:200px}
+.ls-name{font-family:var(--display);font-size:20px}
+.ls-say{margin:4px 0 6px;font-size:16px;display:inline-block}
+.ls-prog{display:flex;align-items:center;gap:8px}.ls-prog .bar{flex:1;max-width:320px}
+/* Zoo Score pop-up */
+.zs-hero{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:var(--yellow);color:var(--btn-ink);border:2px solid var(--line);border-radius:8px;padding:10px 12px}
+.zs-big{font-family:var(--display);font-size:52px;line-height:1}
+.zs-streak-box{display:flex;gap:8px;align-items:center;max-width:280px;background:#fff8ec;border:2px solid var(--line);border-radius:8px;padding:6px 10px}
+.zs-streak-box canvas{transform:scale(1.5);margin:0 6px}
+.zs-next-card{display:flex;gap:12px;align-items:center;margin-top:12px;border:2px dashed var(--line);border-radius:8px;padding:8px 10px}
+.zs-next-card>div:last-child{flex:1;min-width:0}
+.rw-chips{display:inline-flex;flex-wrap:wrap;gap:4px;vertical-align:middle}
+.rw-chips span{display:inline-flex;align-items:center;gap:2px;background:var(--panel-2);border-radius:4px;padding:0 6px;font-size:13px}
+.rw-chips.big{display:flex;gap:6px}.rw-chips.big span{font-size:15px;padding:3px 8px;border:2px solid var(--line)}
+.boosts{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.boosts li{display:flex;align-items:center;gap:8px;background:var(--panel-2);border-radius:6px;padding:5px 8px;font-size:14px}
+.boosts li>span:first-of-type{flex:1}
+.boosts .est{font-family:var(--display);color:var(--ok);font-weight:700;font-size:16px}
+.zs-rows{display:grid;gap:8px}
+.zs-row{display:flex;gap:8px;align-items:flex-start}.zs-row>div{flex:1;min-width:0}
+.zs-row-top{display:flex;justify-content:space-between;font-family:var(--display);font-size:16px}
+.zs-row.mult{border-top:2px dotted var(--panel-2);padding-top:6px}
+.league{list-style:none;margin:0;padding:0;display:grid;gap:3px;max-height:320px;overflow:auto}
+.league li{display:flex;align-items:center;gap:8px;padding:1px 8px;border-radius:6px;font-size:14px}
+.league li .lg-name{flex:1}
+.league li.beaten{opacity:.6}
+.league li.you{background:var(--yellow);color:var(--btn-ink);border:2px solid var(--line);padding:4px 8px;font-family:var(--display);font-size:16px}
+.lg-you{width:40px;display:grid;place-items:center}
+.zs-how{margin-top:12px}.zs-how summary{cursor:pointer;font-family:var(--display);font-size:16px}.zs-how ul{padding-left:18px;margin:6px 0}
+/* climbing the league */
+.sparks{position:absolute;left:0;right:0;top:0;height:80px;pointer-events:none;overflow:hidden}
+.sparks .spark{position:absolute;top:60px;animation:spark 1.4s steps(8) infinite}
+@keyframes spark{0%{transform:translateY(0) scale(.6);opacity:0}30%{opacity:1}100%{transform:translateY(-56px) scale(1.4);opacity:0}}
+.climb-one{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.climb-list{list-style:none;padding:0;margin:0;display:grid;gap:6px;max-height:280px;overflow:auto}
+.climb-list li{display:flex;gap:8px;align-items:center}.climb-list li>span{display:flex;flex-direction:column}
+.climb-rank{font-family:var(--display);font-size:20px;margin:10px 0 0}
+/* mission results and missions page */
+.zs-res{margin:6px auto 10px;max-width:520px;background:var(--panel-2);border:2px solid var(--line);border-radius:8px;padding:8px 10px}
+.zs-res-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;font-family:var(--display);font-size:20px}
+.zs-res-top b{font-size:26px}
+.zs-res-streak{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;background:var(--yellow);color:var(--btn-ink);border-radius:6px;padding:4px 8px;font-size:14px}
+.streak-note{font-weight:600}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="wrap">
-  <header class="top"><div class="brand"><h1>Mission Zoo</h1><span>Year 6 edition</span></div><div class="res" id="res"></div></header>
+  <header class="top"><div class="brand"><h1>Mission Zoo</h1><span>Year 6 edition</span></div><div class="zs-wrap" id="zscore"></div><div class="res" id="res"></div></header>
   <main id="view" aria-live="polite"></main>
   <footer class="foot" id="foot"></footer>
 </div>
@@ -5474,6 +5544,338 @@ Object.assign(ACT, {
   spellCheck() { checkSpelling(); },
   hear(d) { if (!speechOK()) { toast('This device can\'t speak. Use the meaning and the sentence instead.'); return; } sayBee(d.m); },
   hatchEgg() { hatchEgg(); },
+});
+
+</script>
+<script>
+// Mission Zoo: the Zoo Score and the Zoo League.
+// One big number for how good the zoo is: happy, fed animals, granted wishes, friendships, pens, decorations,
+// stickers and (most of all) learning. A daily mission streak multiplies it. Climbing past rival zoos in the
+// Zoo League pays one-off rewards and brings more visitors forever.
+
+// ---------- the rival zoos (the ladder you climb) ----------
+const RIVALS = [
+  { at: 300,   n: 'Soggy Bottom Petting Farm',     m: ['Duck', 1],     taunt: 'Quack! Our pond has THREE puddles. Beat that!',            lose: 'Nooo! Not my puddles!' },
+  { at: 800,   n: "Mrs Pickle's Pet Parade",       m: ['Rabbit', 0],   taunt: 'My bunnies can count to ten. Can yours?',                   lose: 'Well I never! My bunnies are in shock.' },
+  { at: 1600,  n: 'Crumbleton Critter Corner',     m: ['Pig', 1],      taunt: 'We have a pig that can whistle. You have... sheep.',        lose: 'Our pig has stopped whistling. Thanks a lot.' },
+  { at: 3000,  n: 'Wobbly Wallaby Park',           m: ['Kangaroo', 2], taunt: "Boing! We're hopping miles ahead of you!",                  lose: 'Boing... ouch. We fell over.' },
+  { at: 5000,  n: "Captain Beaky's Bird Barn",     m: ['Cockatoo', 0], taunt: 'SQUAWK! Your zoo is SO last week!',                         lose: 'SQUAWK?! How did that happen?!' },
+  { at: 8000,  n: 'Grand Gorilla Gardens',         m: ['Gorilla', 0],  taunt: 'Our gorilla does ballet. On Tuesdays.',                     lose: 'Our gorilla has cancelled ballet. He is sulking.' },
+  { at: 12000, n: "Duchess Fluffington's Menagerie", m: ['Cat', 2],    taunt: 'Darling, your zoo is adorable. For a beginner.',            lose: 'Darling... I need a lie down.' },
+  { at: 18000, n: 'Mega Safari World',             m: ['Lion', 0],     taunt: 'ROAR! Nobody beats Mega Safari World!',                     lose: 'roar... (that was a very small roar)' },
+  { at: 26000, n: 'The Royal Zoological Palace',   m: ['Elephant', 1], taunt: 'The King visits us every Tuesday. Does he visit you?',     lose: 'The King says your zoo is better. How rude.' },
+  { at: 40000, n: 'Zooniverse',                    m: ['Octopus', 2],  taunt: 'Greetings, tiny zoo. We are the best zoo in the galaxy.',   lose: 'Impossible! Beaten by a zoo on a small island!' },
+];
+const LEGEND_STEP = 20000;           // after the top rival, a Legend level every 20,000 points
+const TROPHY_AT = { 2: 'trophyB', 5: 'trophyS', 9: 'trophyG' };
+const FAME_PER_RIVAL = .05;          // +5% visitors for each rival overtaken (for good)
+const STREAK_STEP = .05, STREAK_MAX = 10;   // +5% score per day of streak, up to +50%
+const rivalMascot = r => { const s = SP(r.m[0]); return { s: s ? s.i : 0, t: r.m[1] }; };
+const rivalReward = i => ({ coins: 50 * (i + 1), food: 10 + 5 * i, wood: 10 + 5 * i, egg: 3, trophy: TROPHY_AT[i] || null });
+const legendReward = () => ({ coins: 500, food: 30, wood: 30, egg: 3, trophy: null });
+
+// trophies are decorations you can only win, never buy
+ITEMS.trophyB = { cat: 'decor', n: 'Bronze League Trophy', price: 0, vis: 4, egg: 1 };
+ITEMS.trophyS = { cat: 'decor', n: 'Silver League Trophy', price: 0, vis: 7, egg: 1 };
+ITEMS.trophyG = { cat: 'decor', n: 'Gold League Trophy', price: 0, vis: 12, egg: 1 };
+const DECOR_BASE2 = decorPB;
+decorPB = function (k) {
+  if (k === 'trophyB' || k === 'trophyS' || k === 'trophyG') {
+    const c = { trophyB: '#dea06a', trophyS: P.silver, trophyG: P.gold }[k], r = ramp(c), pb = new PB(22, 30);
+    shRect(pb, 4, 23, 14, 6, P.chestnut); pb.rect(7, 25, 8, 2, ramp(P.cream)[1]);
+    pb.rect(9, 16, 4, 5, r[2]); pb.rect(7, 20, 8, 3, r[1]);
+    pb.poly([[3, 2], [19, 2], [17, 11], [11, 16], [5, 11]], (x) => r[x < 8 ? 0 : x > 15 ? 2 : 1]);
+    pb.line(3, 3, 1, 7, r[1]); pb.line(1, 7, 5, 11, r[1]); pb.line(19, 3, 21, 7, r[2]); pb.line(21, 7, 17, 11, r[2]);
+    pb.ascii(['..X..', '.XXX.', 'XXXXX', '.X.X.'], { X: '#ffffff' }, 9, 5);
+    return done(pb);
+  }
+  return DECOR_BASE2(k);
+};
+EMOTES.flame = [['...X...', '..XX...', '..XXX.X', '.XXOXXX', 'XXOOOXX', 'XXOYOXX', '.XOYOX.', '..XXX..'], { X: P.scarlet, O: P.orange, Y: P.yellow }];
+
+// ---------- state ----------
+function zsState() { return S.zs || (S.zs = { beat: 0, legend: 0, best: 0, streak: 0, lastDay: null, perfect: 0, pend: null }); }
+function yKey() { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+function liveStreak() { const z = zsState(); return z.lastDay === dayKey() || z.lastDay === yKey() ? z.streak : 0; }
+const streakMult = () => 1 + Math.min(liveStreak(), STREAK_MAX) * STREAK_STEP;
+const fameMult = () => 1 + Math.min(zsState().beat, RIVALS.length) * FAME_PER_RIVAL + Math.min(zsState().legend, 10) * .02;
+const fmtX = m => '×' + (Math.round(m * 100) / 100).toFixed(2);
+
+const FIX0 = fix;
+fix = function (d) {
+  d = FIX0(d);
+  if (!d.zs) {
+    d.zs = { beat: 0, legend: 0, best: 0, streak: 0, lastDay: null, perfect: 0, pend: null };
+    if (d.day && d.day.d === dayKey() && d.day.open) { d.zs.streak = 1; d.zs.lastDay = d.day.d; } // already passed a mission today
+  }
+  return d;
+};
+const FRESH0 = fresh;
+fresh = function () { FRESH0(); zsState(); };
+
+// ---------- the score ----------
+function animalBase(a) { const price = a.u ? 3600 : (SPECIES[a.s] ? SPECIES[a.s].p : 100); return 15 + Math.round(Math.sqrt(price) / 2); }
+function zooScore() {
+  const z = zsState(), ids = new Set(S.animals.map(a => a.id));
+  const inPens = S.animals.filter(a => a.pen && penById(a.pen)), sanct = S.animals.filter(a => !a.pen);
+  // animal care
+  let care = 0, wishes = 0, fed = 0, happySum = 0;
+  for (const a of inPens) {
+    const w = wishMet(a); if (w) wishes++; if (a.full >= 50) fed++; happySum += a.happy;
+    let p = animalBase(a) * a.happy / 50 + (a.full >= 50 ? 5 : 0) + (w ? 8 : 0);
+    if (a.caged) p *= .5;
+    care += p;
+  }
+  care += sanct.length * 2;
+  // friendships between animals that still live here
+  let friends = 0, best = 0, pals = 0, foes = 0;
+  for (const k in S.friends) {
+    const [x, y] = k.split('|').map(Number); if (!ids.has(x) || !ids.has(y)) continue;
+    const f = S.friends[k].f;
+    if (f >= 70) { friends += 25; best++; } else if (f >= 30) { friends += 8; pals++; } else if (f <= -70) { friends -= 10; foes++; }
+  }
+  friends = Math.max(0, friends);
+  // zoo design
+  const areas = new Set(S.pens.map(p => p.zone)).size;
+  let design = S.decor.reduce((s, d) => s + 10 + ((ITEMS[d.item] && ITEMS[d.item].vis) || 0) * 5, 0) + S.pens.length * 20 + areas * 50 + (S.stars || 0) * 30;
+  let goodPens = 0, badPens = 0;
+  for (const p of S.pens) { const v = penVibe(p).k; if (['party', 'zen', 'love', 'comedy', 'nap'].includes(v)) { design += 15; goodPens++; } else if (v === 'chaos') { design -= 10; badPens++; } }
+  design = Math.max(0, design);
+  // collection
+  const dex = Object.keys(S.dex).length, pers = Object.keys(S.persSeen).length, ultras = ULTRA.filter(u => S.claimed[u.k]).length;
+  const collection = dex * 15 + pers * 10 + ultras * 500;
+  // learning
+  const correct = ['maths', 'english', 'reading', 'comp'].reduce((s, k) => s + (S.stats[k] ? S.stats[k].c : 0), 0);
+  const learning = correct * 5 + (S.missions || 0) * 10 + (z.perfect || 0) * 25;
+  const parts = { care: Math.round(care), friends, design, collection, learning };
+  const base = parts.care + parts.friends + parts.design + parts.collection + parts.learning, mult = streakMult();
+  return { total: Math.round(base * mult), base, mult, parts,
+    info: { pens: inPens.length, sanct: sanct.length, wishes, fed, avg: inPens.length ? Math.round(happySum / inPens.length) : 0, best, pals, foes, areas, penN: S.pens.length, decor: S.decor.length, stars: S.stars || 0, goodPens, badPens, dex, pers, ultras, correct, missions: S.missions || 0, perfect: z.perfect || 0 } };
+}
+// where you sit in the league: 1 is top
+const leaguePos = sc => RIVALS.filter(r => r.at > sc).length + 1;
+const legendLevel = sc => sc >= RIVALS[RIVALS.length - 1].at ? Math.floor((sc - RIVALS[RIVALS.length - 1].at) / LEGEND_STEP) : 0;
+function nextGoal(sc) {
+  const i = RIVALS.findIndex(r => r.at > sc);
+  if (i >= 0) return { kind: 'rival', i, r: RIVALS[i], at: RIVALS[i].at, from: i ? RIVALS[i - 1].at : 0 };
+  const top = RIVALS[RIVALS.length - 1].at, lv = legendLevel(sc);
+  return { kind: 'legend', n: lv + 1, at: top + (lv + 1) * LEGEND_STEP, from: top + lv * LEGEND_STEP };
+}
+function rankText(sc) { const lv = legendLevel(sc); return sc >= RIVALS[RIVALS.length - 1].at ? (lv ? `#1 · Legend ${lv}` : '#1 · Champion') : `#${leaguePos(sc)} of ${RIVALS.length + 1}`; }
+function shortName(n) { return n.length > 18 ? n.replace(/^(The |Mrs |Captain |Duchess )/, '').split(' ').slice(0, 2).join(' ') : n; }
+
+// ---------- rewards for climbing ----------
+function giveReward(rw) {
+  S.coins += rw.coins; S.food += rw.food; S.wood += rw.wood;
+  const e = egg(); e.warm = Math.min(e.need, e.warm + rw.egg);
+  if (rw.trophy) S.inv[rw.trophy] = inv(rw.trophy) + 1;
+}
+function claimClimbs(sc) {
+  const z = zsState(), got = [];
+  while (z.beat < RIVALS.length && sc >= RIVALS[z.beat].at) {
+    const i = z.beat, rw = rivalReward(i); giveReward(rw); z.beat++; got.push({ kind: 'rival', i });
+    news(`🏆 Your zoo overtook ${RIVALS[i].n} in the Zoo League! Visitors are talking about you.`);
+  }
+  const lv = legendLevel(sc);
+  while (z.legend < lv) { z.legend++; giveReward(legendReward()); got.push({ kind: 'legend', n: z.legend }); news(`🌟 Your zoo reached Legend level ${z.legend}!`); }
+  if (got.length) { z.pend = (z.pend || []).concat(got); save(); RR0(); setTimeout(() => { bump('coins'); bump('food'); bump('wood'); }, 60); }
+  if (z.pend && z.pend.length && !UI.modal && !QS) { const list = z.pend; z.pend = null; save(); openModal({ type: 'climb', list }); }
+}
+
+// ---------- the badge in the top bar ----------
+const ZS = { shown: null, target: null, raf: null, quiet: false };
+function zsBuild(el) {
+  el.innerHTML = `<button class="zs" id="zsBtn" data-act="zoScore" aria-label="Zoo Score. Open the details.">
+    <canvas class="pxi zs-ic" data-icon="trophy" data-scale="2" aria-hidden="true"></canvas>
+    <span class="zs-main"><span class="zs-lbl">Zoo Score</span><b class="zs-num num" id="zsNum">0</b></span>
+    <span class="zs-side"><span class="zs-rank" id="zsRank"></span><span class="zs-bar"><i id="zsBar"></i></span><span class="zs-next" id="zsNext"></span></span>
+    <span class="zs-streak" id="zsStreak"></span></button>`;
+  hydrate(el);
+}
+function zsRefresh() {
+  if (!S) return; const el = $('#zscore'); if (!el) return;
+  if (!el.firstElementChild) zsBuild(el);
+  const sc = zooScore(), tot = sc.total, z = zsState();
+  if (tot > (z.best || 0)) z.best = tot;
+  if (ZS.shown === null) { ZS.shown = ZS.target = tot; $('#zsNum').textContent = fmtC(tot); }
+  else if (tot !== ZS.target) {
+    const diff = tot - ZS.target; ZS.target = tot;
+    if ((!ZS.quiet && (diff >= 3 || diff <= -10)) || Math.abs(diff) >= 50) zsFloat(diff);
+    zsCount();
+  }
+  const g = nextGoal(tot), pct = clamp((tot - g.from) / Math.max(1, g.at - g.from) * 100, 0, 100);
+  $('#zsRank').textContent = `League ${rankText(tot)}`;
+  $('#zsBar').style.width = pct + '%';
+  $('#zsNext').textContent = g.kind === 'rival' ? `${fmtC(g.at - tot)} to beat ${shortName(g.r.n)}` : `${fmtC(g.at - tot)} to Legend ${g.n}`;
+  const st = liveStreak(), sEl = $('#zsStreak');
+  sEl.innerHTML = st ? `${ic('flame')}<b class="num">${st}</b><span class="small">${fmtX(sc.mult)}</span>` : `${ic('flame', 'off')}<span class="small">No streak</span>`;
+  sEl.title = st ? `${st}-day mission streak: your score is multiplied by ${fmtX(sc.mult).slice(1)}` : 'Pass a mission today to start a streak';
+  hydrate(sEl);
+  $('#zsBtn').setAttribute('aria-label', `Zoo Score ${fmtC(tot)}, ${rankText(tot)} in the Zoo League. Open the details.`);
+  zsGateStrip(tot, g, pct);
+  claimClimbs(tot);
+}
+function zsCount() {
+  cancelAnimationFrame(ZS.raf);
+  const from = ZS.shown, to = ZS.target, t0 = performance.now(), ms = reduceMotion() ? 1 : clamp(Math.abs(to - from) * 8, 300, 1200), n = $('#zsNum');
+  const step = now => {
+    const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+    ZS.shown = Math.round(from + (to - from) * e); if (n) n.textContent = fmtC(ZS.shown);
+    if (k < 1) ZS.raf = requestAnimationFrame(step);
+  };
+  ZS.raf = requestAnimationFrame(step);
+}
+function zsFloat(diff) {
+  const b = $('#zsBtn'); if (!b) return;
+  const f = document.createElement('span'); f.className = 'zs-float ' + (diff > 0 ? 'up' : 'down'); f.textContent = (diff > 0 ? '+' : '−') + fmtC(Math.abs(diff));
+  b.appendChild(f); setTimeout(() => f.remove(), 1700);
+  if (diff >= 40) { b.classList.remove('glow'); void b.offsetWidth; b.classList.add('glow'); }
+}
+
+// ---------- the Zoo Gate strip: your next rival taunts you ----------
+function gateStripHTML() {
+  const sc = zooScore().total, g = nextGoal(sc), pct = clamp((sc - g.from) / Math.max(1, g.at - g.from) * 100, 0, 100);
+  const who = g.kind === 'rival' ? g.r : RIVALS[RIVALS.length - 1];
+  const say = g.kind === 'rival' ? who.taunt : 'You beat us all. Keep going and become a Legend!';
+  return `<section class="panel league-strip" id="leagueStrip"><div class="ls-spr">${spr(rivalMascot(who), 2, 'data-noshadow="1"')}</div>
+    <div class="ls-body"><div class="small muted">${g.kind === 'rival' ? `Next in the Zoo League · #${leaguePos(sc) - 1}` : 'Zoo League champion'}</div>
+      <b class="ls-name">${esc(g.kind === 'rival' ? who.n : `Legend level ${g.n}`)}</b>
+      <p class="speech ls-say">"${esc(say)}"</p>
+      <div class="ls-prog">${bar(pct, 'gold')}<span class="small"><b class="num" id="lsGo">${fmtC(g.at - sc)}</b> points to go</span></div></div>
+    <button class="btn go" data-act="zoScore">${ic('trophy')} Zoo Score</button></section>`;
+}
+function zsGateStrip(tot, g, pct) {
+  const s = $('#leagueStrip'); if (!s) return;
+  const n = $('#lsGo'); if (n) n.textContent = fmtC(g.at - tot);
+  const b = s.querySelector('.bar i'); if (b) b.style.width = pct + '%';
+}
+
+// ---------- quick boosts: the best things to do next ----------
+function boosts(sc) {
+  const out = [], inPens = S.animals.filter(a => a.pen && penById(a.pen));
+  const hungry = inPens.filter(a => a.full < 50);
+  if (hungry.length) out.push({ est: hungry.reduce((s, a) => s + 5 + animalBase(a) * .3, 0), icon: 'food', t: `Feed ${hungry.length} hungry animal${hungry.length === 1 ? '' : 's'}${S.food < hungry.length ? ' (you need more food)' : ''}`, act: `data-act="zsGo" data-z="${penById(hungry[0].pen).zone}"`, btn: 'Go' });
+  const sanct = S.animals.filter(a => !a.pen);
+  if (sanct.length) out.push({ est: sanct.reduce((s, a) => s + animalBase(a) * 1.1 + 3, 0), icon: 'paw', t: `Move ${sanct.length} animal${sanct.length === 1 ? '' : 's'} out of the Sanctuary into pens`, act: `data-act="zsGo" data-z="${spec(sanct[0]).z}"`, btn: 'Go' });
+  const unmet = inPens.filter(a => wishMet(a) === false);
+  if (unmet.length) out.push({ est: unmet.reduce((s, a) => s + 8 + animalBase(a) * .3, 0), icon: 'cloud', t: `Grant ${unmet.length} animal wish${unmet.length === 1 ? '' : 'es'}`, act: 'data-act="zsGo" data-s="animals" data-f="wish"', btn: 'See wishes' });
+  const decorInv = Object.keys(ITEMS).filter(k => ITEMS[k].cat === 'decor' && inv(k) > 0);
+  if (decorInv.length && S.pens.length) out.push({ est: decorInv.reduce((s, k) => s + (10 + (ITEMS[k].vis || 0) * 5) * inv(k), 0), icon: 'edit', t: `Place ${decorInv.reduce((s, k) => s + inv(k), 0)} decoration${decorInv.reduce((s, k) => s + inv(k), 0) === 1 ? '' : 's'} from your backpack`, act: 'data-act="zsGo" data-s="edit"', btn: 'Edit zoo' });
+  const st = liveStreak(), z = zsState();
+  if (z.lastDay !== dayKey()) out.push({ est: 60 + sc.base * STREAK_STEP, icon: 'flame', t: st ? `Pass a mission today to grow your ${st}-day streak (score ${fmtX(1 + Math.min(st + 1, STREAK_MAX) * STREAK_STEP)})` : 'Pass a mission today to start a streak (score ×1.05)', act: 'data-act="zsGo" data-s="missions"', btn: 'Missions', top: true });
+  else out.push({ est: 60, icon: 'mission', t: 'Do another mission: +5 for every new right answer, +25 for a perfect one', act: 'data-act="zsGo" data-s="missions"', btn: 'Missions' });
+  const chaos = S.pens.filter(p => penVibe(p).k === 'chaos');
+  if (chaos.length) out.push({ est: 10 * chaos.length + 20, icon: 'anger', t: `Calm down ${chaos.length} "Trouble brewing" pen${chaos.length === 1 ? '' : 's'} (a Peacekeeper helps)`, act: `data-act="zsGo" data-z="${chaos[0].zone}"`, btn: 'Go' });
+  out.push({ est: 40, icon: 'book', t: 'Adopt a kind of animal you don\'t have yet: +15 for every new sticker', act: 'data-act="zsGo" data-s="shop" data-tab="animals"', btn: 'Shop' });
+  out.sort((a, b) => (b.top ? 1e6 : b.est) - (a.top ? 1e6 : a.est));
+  return out.slice(0, 4);
+}
+
+// ---------- pop-ups ----------
+function zsModal() {
+  const sc = zooScore(), tot = sc.total, z = zsState(), g = nextGoal(tot), I = sc.info, st = liveStreak();
+  const close = `<button class="close" data-act="closeModal" aria-label="Close">×</button>`;
+  const pct = clamp((tot - g.from) / Math.max(1, g.at - g.from) * 100, 0, 100);
+  const rows = [
+    ['paw', 'Animal care', sc.parts.care, `${I.pens} in pens · ${I.avg}% happy on average · ${I.wishes} wishes granted · ${I.fed} well fed${I.sanct ? ` · ${I.sanct} resting in the Sanctuary` : ''}`],
+    ['heart', 'Friendships', sc.parts.friends, `${I.best} best-friend pair${I.best === 1 ? '' : 's'} · ${I.pals} friend pair${I.pals === 1 ? '' : 's'}${I.foes ? ` · ${I.foes} enemy pair${I.foes === 1 ? '' : 's'} (they cost points)` : ''}`],
+    ['pen', 'Zoo design', sc.parts.design, `${I.penN} pen${I.penN === 1 ? '' : 's'} in ${I.areas} area${I.areas === 1 ? '' : 's'} · ${I.decor} decoration${I.decor === 1 ? '' : 's'} · ${I.stars} Zoo Star${I.stars === 1 ? '' : 's'}${I.goodPens ? ` · ${I.goodPens} happy pen vibe${I.goodPens === 1 ? '' : 's'}` : ''}`],
+    ['book', 'Collection', sc.parts.collection, `${I.dex} sticker${I.dex === 1 ? '' : 's'} · ${I.pers} personalit${I.pers === 1 ? 'y' : 'ies'} met · ${I.ultras} ultra rare${I.ultras === 1 ? '' : 's'}`],
+    ['mission', 'Learning', sc.parts.learning, `${fmtC(I.correct)} new right answers · ${fmtC(I.missions)} missions · ${I.perfect} perfect`],
+  ];
+  const maxP = Math.max(1, ...rows.map(r => r[2]));
+  const nextCard = g.kind === 'rival'
+    ? `<div class="zs-next-card"><div class="ls-spr">${spr(rivalMascot(g.r), 3, 'data-noshadow="1"')}</div><div><div class="small muted">Next rival · they're #${leaguePos(tot) - 1}</div><b class="ls-name">${esc(g.r.n)}</b><p class="speech ls-say">"${esc(g.r.taunt)}"</p>
+        ${bar(pct, 'gold')}<div class="small"><b class="num">${fmtC(g.at - tot)}</b> points to overtake them. Prize: ${rewardChips(rivalReward(g.i))}</div></div></div>`
+    : `<div class="zs-next-card"><div class="ls-spr">${ic('star', 'big')}</div><div><b class="ls-name">Legend level ${g.n}</b><p class="small">You've beaten every zoo in the league! Every ${fmtC(LEGEND_STEP)} more points is a new Legend level.</p>${bar(pct, 'gold')}<div class="small"><b class="num">${fmtC(g.at - tot)}</b> points to go. Prize: ${rewardChips(legendReward())}</div></div></div>`;
+  const ladder = [...RIVALS.map((r, i) => ({ r, i, at: r.at }))].reverse();
+  const youIdx = ladder.findIndex(x => x.at <= tot);
+  const rowsL = ladder.map((x, j) => `<li class="${x.at <= tot ? 'beaten' : ''}">${spr(rivalMascot(x.r), 1, 'data-noshadow="1"')}<span class="lg-name">${esc(x.r.n)}</span><span class="num">${fmtC(x.at)}</span>${x.at <= tot ? ic('heart', 'ok') : ''}</li>`);
+  const youRow = `<li class="you"><span class="lg-you">${ic('trophy')}</span><span class="lg-name"><b>Your zoo</b></span><b class="num">${fmtC(tot)}</b></li>`;
+  if (youIdx < 0) rowsL.push(youRow); else rowsL.splice(youIdx, 0, youRow);
+  return `${close}<h3>${ic('trophy')} Zoo Score</h3>
+    <div class="zs-hero"><div><div class="zs-big num">${fmtC(tot)}</div><div class="small">${rankText(tot)} in the Zoo League · best ever ${fmtC(z.best || tot)}</div></div>
+      <div class="zs-streak-box ${st ? '' : 'off'}">${ic('flame', st ? '' : 'off')}<div><b>${st ? `${st}-day streak` : 'No streak yet'}</b><div class="small">${st ? `Score ${fmtX(sc.mult)}. ${z.lastDay === dayKey() ? 'Come back tomorrow to keep it going!' : 'Pass a mission today or it resets!'}` : 'Pass a mission today to start one. Each day adds 5%, up to +50%.'}</div></div></div></div>
+    ${nextCard}
+    <h4>Quick boosts</h4><ul class="boosts">${boosts(sc).map(b => `<li>${ic(b.icon)}<span>${esc(b.t)}</span><span class="est num">+${fmtC(Math.max(5, Math.round(b.est / 5) * 5))}</span><button class="btn sm" ${b.act}>${esc(b.btn)}</button></li>`).join('')}</ul>
+    <h4>Where your score comes from</h4><div class="zs-rows">${rows.map(r => `<div class="zs-row">${ic(r[0])}<div><div class="zs-row-top"><b>${r[1]}</b><span class="num">${fmtC(r[2])}</span></div>${bar(r[2] / maxP * 100, 'gold')}<div class="small muted">${esc(r[3])}</div></div></div>`).join('')}
+      <div class="zs-row mult">${ic('flame')}<div><div class="zs-row-top"><b>Streak bonus</b><span class="num">${fmtX(sc.mult)}</span></div><div class="small muted">${fmtC(sc.base)} points ${fmtX(sc.mult)} = ${fmtC(tot)}</div></div></div></div>
+    <h4>The Zoo League</h4><ol class="league">${rowsL.join('')}</ol>
+    <details class="zs-how"><summary>How points work</summary><ul class="small">
+      <li>Every animal in a pen scores more the happier it is (up to double at 100%), plus 5 if it's well fed and 8 if its wish is granted. Bigger, rarer animals are worth more. Caged animals score half.</li>
+      <li>Best friends +25 a pair, friends +8. Enemies −10.</li>
+      <li>Each pen +20, each area you open +50, each decoration +10 plus 5 for every visitor it attracts, each Zoo Star +30. Happy pen vibes +15, "Trouble brewing" −10.</li>
+      <li>Each sticker +15, each personality met +10, each ultra rare +500.</li>
+      <li>Each new right answer +5, each mission +10, each perfect mission +25.</li>
+      <li>Your mission streak multiplies everything: +5% for each day in a row you pass a mission (3 or more right), up to +50%. Miss a day and it starts again.</li>
+      <li>Overtaking a rival zoo wins coins, food, wood and egg warmth, and brings 5% more visitors for good. Trophies at 3rd, 6th and 10th.</li></ul></details>
+    <div class="row center"><button class="btn go" data-act="zsGo" data-s="missions">${ic('mission')} Do a mission</button><button class="btn" data-act="closeModal">Close</button></div>`;
+}
+function rewardChips(rw) {
+  return `<span class="rw-chips"><span>${ic('coin')}${fmtC(rw.coins)}</span><span>${ic('food')}${rw.food}</span><span>${ic('wood')}${rw.wood}</span><span>+${rw.egg} egg warmth</span>${rw.trophy ? `<span>${itemIc(rw.trophy)}${esc(ITEMS[rw.trophy].n)}</span>` : ''}<span>+5% visitors</span></span>`;
+}
+function climbModal(m) {
+  const list = m.list, rivals = list.filter(x => x.kind === 'rival'), legends = list.filter(x => x.kind === 'legend');
+  const tot = zooScore().total, g = nextGoal(tot);
+  const total = { coins: 0, food: 0, wood: 0, egg: 0 }, trophies = [];
+  for (const x of list) { const rw = x.kind === 'rival' ? rivalReward(x.i) : legendReward(); total.coins += rw.coins; total.food += rw.food; total.wood += rw.wood; total.egg += rw.egg; if (rw.trophy) trophies.push(rw.trophy); }
+  const last = rivals.length ? RIVALS[rivals[rivals.length - 1].i] : null;
+  const head = rivals.length > 1 ? `You shot up the Zoo League!` : last ? `You overtook ${esc(last.n)}!` : `Legend level ${legends[legends.length - 1].n}!`;
+  const body = rivals.length > 1
+    ? `<ul class="climb-list">${rivals.map(x => `<li>${spr(rivalMascot(RIVALS[x.i]), 2, 'data-noshadow="1" data-mood="shock"')}<span><b>${esc(RIVALS[x.i].n)}</b><span class="small muted">"${esc(RIVALS[x.i].lose)}"</span></span></li>`).join('')}</ul>`
+    : last ? `<div class="climb-one"><div class="ls-spr">${spr(rivalMascot(last), 3, 'data-noshadow="1" data-mood="shock"')}</div><p class="speech">"${esc(last.lose)}"</p></div>`
+    : `<p>Your zoo is famous across the whole galaxy. The crowds keep growing!</p>`;
+  const sparks = Array.from({ length: 10 }, (_, i) => `<canvas class="pxi spark" data-icon="${i % 3 ? 'sparkle' : 'star'}" style="left:${6 + i * 9}%;animation-delay:${(i % 5) * .12}s" aria-hidden="true"></canvas>`).join('');
+  return `<button class="close" data-act="closeModal" aria-label="Close">×</button><div class="sparks" aria-hidden="true">${sparks}</div>
+    <h3>${ic('trophy')} ${head}</h3>${body}
+    <p class="climb-rank">You're now <b>${rankText(tot)}</b> in the Zoo League.</p>
+    <h4>Your prize</h4><div class="rw-chips big"><span>${ic('coin')}${fmtC(total.coins)} coins</span><span>${ic('food')}${total.food} food</span><span>${ic('wood')}${total.wood} wood</span><span>+${total.egg} egg warmth</span>${trophies.map(k => `<span>${itemIc(k)}${esc(ITEMS[k].n)}</span>`).join('')}<span>+${rivals.length * 5}% visitors for good</span></div>
+    ${trophies.length ? '<p class="small">Your trophy is in your backpack. Place it in Edit mode so visitors can admire it.</p>' : ''}
+    <p class="small muted">${g.kind === 'rival' ? `Next up: <b>${esc(g.r.n)}</b>, ${fmtC(g.at - tot)} points away. "${esc(g.r.taunt)}"` : `Next: Legend level ${g.n}, ${fmtC(g.at - tot)} points away.`}</p>
+    <div class="row center"><button class="btn go" data-act="closeModal">Woohoo!</button><button class="btn" data-act="zoScore">See Zoo Score</button>${trophies.length ? '<button class="btn" data-act="go" data-s="edit">Place trophy</button>' : ''}</div>`;
+}
+MODAL_EXTRA.zscore = zsModal;
+MODAL_EXTRA.climb = climbModal;
+
+// ---------- hooks into the rest of the game ----------
+const RR0 = renderRes;
+renderRes = function () { RR0(); zsRefresh(); };
+const RL0 = refreshLive;
+refreshLive = function () { ZS.quiet = true; try { RL0(); } finally { ZS.quiet = false; } };
+const VRATE0 = visitorRate;
+visitorRate = function () { return VRATE0() * fameMult(); };
+const VGATE0 = vGate;
+vGate = function () { return VGATE0().replace('<div class="panels" id="gatePanel">', gateStripHTML() + '<div class="panels" id="gatePanel">'); };
+const TODAY0 = todayHTML;
+todayHTML = function () {
+  const st = liveStreak(), done = zsState().lastDay === dayKey();
+  return TODAY0().replace(/<\/div>$/, `<span class="streak-note">${ic('flame', st ? '' : 'off')} ${st ? `<b>${st}-day streak</b> · Zoo Score ${fmtX(streakMult())}${done ? '' : ' · pass a mission today to keep it!'}` : 'No streak yet: pass a mission to start one'}</span></div>`);
+};
+const FM0 = finishMission;
+finishMission = function () {
+  const M = UI.M;
+  if (M && !M.done) {
+    const correct = M.res.filter(Boolean).length, mc = M.mc !== undefined ? M.mc : M.subj !== 'maths', passed = !mc || correct >= PASS_MARK;
+    M.zs0 = zooScore().total; M.zsStreakUp = 0;
+    const z = zsState();
+    if (passed && correct === M.qs.length) z.perfect = (z.perfect || 0) + 1;
+    if (correct >= OPEN_MARK && z.lastDay !== dayKey()) { z.streak = z.lastDay === yKey() ? (z.streak || 0) + 1 : 1; z.lastDay = dayKey(); M.zsStreakUp = z.streak; }
+  }
+  FM0();
+};
+const VR0 = vResult;
+vResult = function () {
+  const h = VR0(), M = UI.M; if (!M || !M.done || M.zs0 === undefined) return h;
+  const tot = zooScore().total; if (M.done.zsGain === undefined) M.done.zsGain = tot - M.zs0;
+  const gain = M.done.zsGain, up = M.zsStreakUp, g = nextGoal(tot);
+  const streak = up ? `<div class="zs-res-streak">${ic('flame')} <b>${up === 1 ? 'Streak started!' : `${up}-day streak!`}</b> Your Zoo Score is now ${fmtX(streakMult())}. ${up === 1 ? 'Pass a mission tomorrow to make it 2.' : `Come back tomorrow for day ${up + 1}.`}</div>` : '';
+  const extra = `<div class="zs-res"><div class="zs-res-top">${ic('trophy')} <span>Zoo Score</span> <b class="num ${gain >= 0 ? 'new' : 'old'}">${gain >= 0 ? '+' : '−'}${fmtC(Math.abs(gain))}</b> <span class="muted small">now ${fmtC(tot)} · ${rankText(tot)}</span></div>
+    <div class="small">${g.kind === 'rival' ? `${fmtC(g.at - tot)} more to overtake <b>${esc(g.r.n)}</b>` : `${fmtC(g.at - tot)} more to Legend level ${g.n}`}</div>${streak}</div>`;
+  return h.replace(/(<p class="reward-line">[\s\S]*?<\/p>)/, '$1' + extra);
+};
+Object.assign(ACT, {
+  zoScore() { openModal({ type: 'zscore' }); },
+  zsGo(d) { closeModal(); if (d.z) goZone(d.z); else ACT.go(d); },
 });
 
 </script>
